@@ -149,6 +149,7 @@ fn main() {
         .add_system(sync_hitbox_with_atlassprite)
         .add_system(sync_textbox_vis)
         .add_system(txb_tick)
+        .add_system(oscillate)
         .add_system(graphics::animate_sprite)
         .add_system(graphics::anime_moving_char)
         .add_system(events::player_use_input)

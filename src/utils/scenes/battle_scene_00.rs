@@ -32,8 +32,10 @@ pub fn spawn_battle_scene_00(
         }
     }
 
+
     if scene_updater.b && !deletor.b {
         scene_updater.b = false;  
+        spawn_pass_big(&mut commands, 0., 150., 3., asset_server.load("mob.png"));
     }   
 
     if scene_updater.transitioning {

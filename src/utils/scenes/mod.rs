@@ -46,10 +46,49 @@ pub fn check_bg_change(
         });
         if battle.choice == 0 {
             spawn_image(&mut commands, 0., -100., 1., 550., 180.,asset_server.load("fight-bg.png"));
-            spawn_image(&mut commands, -300., -100., 2., 200., 200.,asset_server.load("bar-light.png"));
+            spawn_oscillate_bar(&mut commands, -280., -100., 2., 200., 200.,asset_server.load("bar-light.png"));
         }
         spawn_background(&mut commands, &screen, battle_asset.clone());
     }
+}
+
+#[derive(Component)]
+pub struct Oscillate {
+    max: f32,
+    min: f32,
+    direction: i8
+}
+
+pub fn oscillate(mut q: Query<(&mut Transform, &mut Oscillate)>) {
+    for (mut tr, mut osc) in q.iter_mut() {
+        if tr.translation.x >= osc.max {
+            osc.direction = -1;
+        } else if tr.translation.x <= osc.min {
+            osc.direction = 1;
+        }
+        tr.translation.x+=osc.direction as f32*10.;
+    }
+}
+
+
+pub fn spawn_oscillate_bar(mut commands: &mut Commands, x: f32, y: f32, z: f32, width: f32,height: f32, tat: Handle<Image>) {
+    commands
+        .spawn_bundle(SpriteBundle {
+            texture: tat,
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(width, height)),
+                ..Default::default()
+            },
+            transform: Transform::from_xyz(x, y, z),
+            ..Default::default()
+        })
+        .insert(Oscillate {
+            min: x,
+            max: -x,
+            direction: 1
+        })
+        .insert(Map {})
+        .insert(BG {});
 }
 
 #[derive(Debug)]
@@ -116,6 +155,22 @@ pub fn spawn_pass_tile(mut commands: &mut Commands, x: f32, y: f32, z: f32, tat:
         // deleted as part of the map
         .insert(Map {});
 }
+
+pub fn spawn_pass_big(mut commands: &mut Commands, x: f32, y: f32, z: f32, tat: Handle<Image>) {
+    commands
+        .spawn_bundle(SpriteBundle {
+        texture: tat,
+        sprite: Sprite {
+            custom_size: Some(Vec2::new(128., 128.)),
+            ..Default::default()
+        },
+        transform: Transform::from_xyz(x, y, z),
+        ..Default::default()
+        })
+        // deleted as part of the map
+        .insert(Map {});
+}
+
 
 pub fn spawn_wall_tile(mut commands: &mut Commands, x: f32, y: f32, z: f32, tat: Handle<Image>) {
     commands
